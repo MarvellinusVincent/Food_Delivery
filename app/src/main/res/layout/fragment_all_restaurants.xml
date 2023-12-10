@@ -1,0 +1,34 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.fooddeliveryapp.DeliveryViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".AllRestaurantsFragment"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="ALL RESTAURANTS"
+            android:textStyle="bold"
+            android:textSize="30sp"/>
+
+        <!-- RecyclerView to display restaurants -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewAllRestaurants"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            tools:listitem="@layout/restaurant_item" />
+
+    </LinearLayout>
+</layout>

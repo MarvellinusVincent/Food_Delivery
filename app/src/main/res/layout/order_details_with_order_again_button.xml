@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="5dp"
+    app:cardElevation="5dp"
+    android:layout_margin="5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:id="@+id/foodItemsOrderAgainLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical">
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/OrderAgainRestaurantName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="Restaurant name"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/OrderAgainPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="Price"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/OrderAgainDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="Date"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/OrderAgainTime"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center|right"
+                android:layout_marginBottom="20dp"
+                android:text="Time"
+                android:textSize="18sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/OrderAgainAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="Address"
+                android:textSize="18sp" />
+        </LinearLayout>
+        <Button
+            android:id="@+id/OrderAgainButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Order Again"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

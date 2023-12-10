@@ -1,0 +1,42 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.fooddeliveryapp.DeliveryViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".OrdersFragment"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Order Details:"
+            android:textStyle="bold"
+            android:textSize="30sp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ordersRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:background="@android:color/transparent"
+            android:scrollbars="vertical" />
+
+        <Button
+            android:id="@+id/trackOrderButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TRACK ORDER"/>
+    </LinearLayout>
+</layout>

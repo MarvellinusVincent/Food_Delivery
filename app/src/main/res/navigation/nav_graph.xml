@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashFragment">
+
+    <!-- Splash Fragment -->
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.example.fooddeliveryapp.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" >
+        <!-- Navigation Action: Navigate from Splash to SignIn Fragment -->
+        <action
+            android:id="@+id/action_splashFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+        <!-- Navigation Action: Navigate from Splash to Home Fragment -->
+        <action
+            android:id="@+id/action_splashFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+
+    <!-- SignIn Fragment -->
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="com.example.fooddeliveryapp.SignInFragment"
+        android:label="fragment_sign_in"
+        tools:layout="@layout/fragment_sign_in" >
+        <!-- Navigation Action: Navigate from SignIn to SignUp Fragment -->
+        <action
+            android:id="@+id/action_signInFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_signInFragment_to_HomeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+
+    <!-- SignUp Fragment -->
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.example.fooddeliveryapp.SignUpFragment"
+        android:label="fragment_sign_up"
+        tools:layout="@layout/fragment_sign_up" >
+        <action
+            android:id="@+id/action_signUpFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+        <action
+            android:id="@+id/action_signUpFragment_to_HomeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+
+    <!-- Home Fragment -->
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.fooddeliveryapp.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_restaurantFragment"
+            app:destination="@id/restaurantFragment" />
+    </fragment>
+
+    <!-- Restaurant Fragment -->
+    <fragment
+        android:id="@+id/restaurantFragment"
+        android:name="com.example.fooddeliveryapp.RestaurantFragment"
+        android:label="fragment_restaurant"
+        tools:layout="@layout/fragment_restaurant" >
+        <!-- Argument for passing in the restaurant name -->
+        <action
+            android:id="@+id/action_restaurantFragment_to_checkoutFragment"
+            app:destination="@id/checkoutFragment" />
+        <argument
+            android:name="restaurantName"
+            app:argType="string" />
+    </fragment>
+
+    <!-- Checkout Fragment -->
+    <fragment
+        android:id="@+id/checkoutFragment"
+        android:name="com.example.fooddeliveryapp.CheckoutFragment"
+        android:label="fragment_checkout"
+        tools:layout="@layout/fragment_checkout" >
+        <action
+            android:id="@+id/action_checkoutFragment_to_restaurantFragment"
+            app:destination="@id/restaurantFragment" />
+        <action
+            android:id="@+id/action_checkoutFragment_to_ordersFragment"
+            app:destination="@id/ordersFragment" />
+    </fragment>
+
+    <!-- Order Fragment -->
+    <fragment
+        android:id="@+id/ordersFragment"
+        android:name="com.example.fooddeliveryapp.OrdersFragment"
+        android:label="fragment_orders"
+        tools:layout="@layout/fragment_orders" >
+        <argument
+            android:name="restaurantName"
+            app:argType="string" />
+    </fragment>
+
+    <!-- Recent Order Fragment -->
+    <fragment
+        android:id="@+id/recentOrderFragment"
+        android:name="com.example.fooddeliveryapp.RecentOrdersFragment"
+        android:label="fragment_recent_orders"
+        tools:layout="@layout/fragment_recent_orders" >
+    </fragment>
+
+    <!-- Calendar Fragment -->
+    <fragment
+        android:id="@+id/calendarFragment"
+        android:name="com.example.fooddeliveryapp.CalendarFragment"
+        android:label="fragment_calendar"
+        tools:layout="@layout/fragment_calendar" />
+
+    <action
+        android:id="@+id/action_global_signUpFragment"
+        app:destination="@id/signUpFragment" />
+
+</navigation>

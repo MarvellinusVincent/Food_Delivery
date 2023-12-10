@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".CheckoutFragment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/checkoutRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:background="@android:color/background_light"
+        android:clipToPadding="false"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:scrollbars="vertical" />
+
+    <TextView
+        android:id="@+id/checkoutDeliveryAddressTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Delivery Address:"
+        android:textSize="18sp"/>
+
+
+    <EditText
+        android:id="@+id/checkoutDeliveryAddressEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="start|top"
+        android:hint="Type address here:"
+        android:textSize="16sp"
+        android:background="@null"
+        android:textColorHint="#888888" />
+
+    <TextView
+        android:id="@+id/checkoutSpecialInstructionsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Special Instructions:"
+        android:textSize="18sp"/>
+
+    <EditText
+        android:id="@+id/checkoutSpecialInstructionsEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="start|top"
+        android:hint="Type special instructions here:"
+        android:textSize="16sp"
+        android:background="@null"
+        android:textColorHint="#888888" />
+
+    <Button
+        android:id="@+id/checkoutModifyOrderButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="MODIFY ORDER"
+        android:textSize="18sp"
+        android:gravity="center"/>
+
+    <Button
+        android:id="@+id/checkoutPlaceOrderButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="PLACE ORDER"
+        android:textSize="18sp"
+        android:gravity="center"/>
+
+
+</LinearLayout>

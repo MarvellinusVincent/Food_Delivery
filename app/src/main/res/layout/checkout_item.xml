@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="5dp"
+    app:cardElevation="5dp"
+    android:layout_margin="5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Checkout item name -->
+            <TextView
+                android:id="@+id/checkoutItemName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Item Name"
+                android:textSize="18sp" />
+
+            <!-- Checkout item quantity -->
+            <TextView
+                android:id="@+id/checkoutItemQuantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quantity: 0"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Checkout item price -->
+        <TextView
+            android:id="@+id/checkoutItemPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center_vertical"
+            android:text="0"
+            android:textSize="14sp" />
+
+        <!-- Add button -->
+        <ImageButton
+            android:id="@+id/addCheckoutButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_weight="1.5"
+            android:text="Add"
+            app:srcCompat="@drawable/ic_plus"
+            android:onClick="onAddButtonClick" />
+
+        <!-- Delete button -->
+        <ImageButton
+            android:id="@+id/deleteCheckoutButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_weight="1.5"
+            android:text="Min"
+            app:srcCompat="@drawable/ic_minus"
+            android:onClick="onDeleteButtonClick" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
