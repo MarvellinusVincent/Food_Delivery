@@ -11,5 +11,7 @@
     <string name="re_enter_your_pass">Re-enter Your Password .....</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="total_money_spend">Total Money Spend: %.2f</string>
+    <string name="restaurant_name">Restaurant Name: %s</string>
 
 </resources>

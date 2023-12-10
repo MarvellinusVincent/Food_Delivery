@@ -1,15 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/recentOrders"
-            android:title="Recent Orders" />
-        <item
-            android:id="@+id/calendarView"
-            android:title="Calendar_View" />
-    </group>
 
+    <!-- Home menu item with submenu -->
+    <item
+        android:id="@+id/homeFragment"
+        android:title="Home">
+        <menu>
+            <item
+                android:id="@+id/home"
+                android:title="Restaurants" />
+            <item
+                android:id="@+id/recentOrders"
+                android:title="Recent Orders" />
+            <item
+                android:id="@+id/calendarView"
+                android:title="Calendar View" />
+        </menu>
+    </item>
+
+    <!-- Divider line between "Home" submenu and "Sign Out" -->
+    <item
+        android:id="@+id/divider"
+        android:title=""
+        app:showAsAction="never"
+        app:actionLayout="@layout/divider_layout"/>
+
+    <!-- Sign Out item -->
     <item
         android:id="@+id/signOut"
         android:title="Sign Out"

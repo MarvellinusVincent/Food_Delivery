@@ -46,6 +46,7 @@ dependencies {
     implementation("com.google.firebase:firebase-database-ktx:20.3.0")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.5")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.ar.sceneform:filament-android:1.17.1")
     val lifecycle_version = "2.4.1"
     val room_version = "2.4.1"
     implementation("androidx.core:core-ktx:1.9.0")
@@ -70,4 +71,5 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.google.firebase:firebase-firestore:24.9.0")
     implementation("com.google.firebase:firebase-storage:20.3.0")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

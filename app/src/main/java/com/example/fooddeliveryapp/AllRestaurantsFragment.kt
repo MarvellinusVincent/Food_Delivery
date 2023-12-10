@@ -29,6 +29,8 @@ class AllRestaurantsFragment : Fragment() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
+        viewModel.initializeRestaurantDatabaseIfNeeded()
+
         // Observe the list of restaurants in the ViewModel
         viewModel.restaurants.observe(viewLifecycleOwner, Observer { restaurants ->
             adapter.submitList(restaurants)

@@ -11,7 +11,9 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.app.ActivityCompat
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -42,6 +44,9 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
+        if (viewModel.getCurrentUser() != null) {
+            drawer.openDrawer(GravityCompat.START)
+        }
 
         // Identify top-level destinations
         val topLevelDestinations = setOf(
@@ -79,6 +84,9 @@ class MainActivity : AppCompatActivity() {
             )
         }
         updateUserInfo()
+        viewModel.updateUserInfoEvent.observe(this, Observer {
+            updateUserInfo()
+        })
     }
 
     /*
@@ -138,6 +146,13 @@ class MainActivity : AppCompatActivity() {
                     drawer.closeDrawers()
                     true
                 }
+                R.id.home -> {
+                    val navController = findNavController(R.id.nav_host_fragment)
+                    navController.navigate(R.id.homeFragment)
+                    val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
+                    drawer.closeDrawers()
+                    true
+                }
                 // Add other menu item click handling as needed
                 else -> false
             }
@@ -148,20 +163,23 @@ class MainActivity : AppCompatActivity() {
         val navHeader = navView.getHeaderView(0)
         val nameTextView = navHeader.findViewById<TextView>(R.id.nameDrawerHeader)
         val emailTextView = navHeader.findViewById<TextView>(R.id.emailDrawerHeader)
-        val profilePicture = navHeader.findViewById<ImageView>(R.id.profilePictureSet)
 
         if (user != null) {
             Log.d(TAG, "user logged in")
             // Set the user's name and email in the navigation drawer header
-            val profilePictureUri = viewModel.getProfilePictureUri(user.uid)
-            Glide.with(this)
-                .load(profilePictureUri)
-                .placeholder(R.drawable.user_icon)
-                .error(R.drawable.user_icon)
-                .circleCrop()
-                .into(profilePicture)
-            nameTextView.text = user.displayName
-            emailTextView.text = user.email
+            viewModel.getProfilePictureUri().observe(this) { profilePictureUri ->
+                val navHeader = navView.getHeaderView(0)
+                val profilePicture = navHeader.findViewById<ImageView>(R.id.profilePictureSet)
+                Glide.with(this)
+                    .load(profilePictureUri)
+                    .placeholder(R.drawable.user_icon)
+                    .error(R.drawable.user_icon)
+                    .circleCrop()
+                    .into(profilePicture)
+                nameTextView.text = user.displayName
+                emailTextView.text = user.email
+            }
+
         } else {
             Log.d(TAG, "user not logged in")
             // If user is not logged in, set default values or hide the views

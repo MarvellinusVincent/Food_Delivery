@@ -30,6 +30,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import java.sql.Time
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import kotlin.random.Random
@@ -41,8 +42,9 @@ class DeliveryViewModel : ViewModel() {
     private lateinit var context: Context
     private lateinit var locationManager: LocationManager
     private lateinit var locationListener: LocationListener
+    private var currentStartDate: Date = Date()
     var lastKnownLocation: Location? = null
-
+    private var isRestaurantDatabaseInitialized = false
 
     var user: User = User()
     var name = ""
@@ -58,6 +60,7 @@ class DeliveryViewModel : ViewModel() {
     private val _errorHappened = MutableLiveData<String?>()
     private val _filteredOrders: MutableLiveData<MutableList<Order>> = MutableLiveData()
     private var ordersList: List<Order> = emptyList()
+    private val _updateUserInfoEvent = MutableLiveData<Unit>()
 
     val restaurants: LiveData<List<Restaurant>>
         get() = _restaurants as LiveData<List<Restaurant>>
@@ -75,18 +78,14 @@ class DeliveryViewModel : ViewModel() {
         get() = _errorHappened
     val filteredOrders: LiveData<List<Order>>
         get() = _filteredOrders as LiveData<List<Order>>
+    val updateUserInfoEvent: LiveData<Unit>
+        get() = _updateUserInfoEvent
 
     init {
         Log.d(TAG, "viewmodel initialized")
         auth = Firebase.auth
         context = FirebaseApp.getInstance().applicationContext
-        initializeTheRestaurantDatabaseReference()
-        if (_restaurants.value?.isEmpty() == true) {
-            initializeDummyRestaurantsData()
-        }
-        if (_orders.value?.isEmpty() == true) {
-            initializeDummyOrdersData()
-        }
+        initializeRestaurantDatabaseIfNeeded()
 
         locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationListener = object : LocationListener {
@@ -115,6 +114,15 @@ class DeliveryViewModel : ViewModel() {
 
     fun getCurrentUser(): FirebaseUser? {
         return auth.currentUser
+    }
+
+    fun initializeRestaurantDatabaseIfNeeded() {
+        if (auth.currentUser != null && !isRestaurantDatabaseInitialized) {
+            initializeTheRestaurantDatabaseReference()
+            initializeDummyRestaurantsData()
+            initializeDummyOrdersData()
+            isRestaurantDatabaseInitialized = true
+        }
     }
 
     fun initializeTheRestaurantDatabaseReference() {
@@ -317,18 +325,22 @@ class DeliveryViewModel : ViewModel() {
                                         .addOnCompleteListener { updatePhotoTask ->
                                             if (updatePhotoTask.isSuccessful) {
                                                 // Profile picture URI updated successfully
+                                                _navigateToHome.value = true
+                                                notifyUpdateUserInfo()
+                                                initializeTheRestaurantDatabaseReference()
                                                 initializeDummyRestaurantsData()
                                                 initializeDummyOrdersData()
-                                                _navigateToHome.value = true
                                             } else {
                                                 _errorHappened.value = updatePhotoTask.exception?.message
                                             }
                                         }
                                 } else {
                                     // No profile picture URI to set
+                                    _navigateToHome.value = true
+                                    notifyUpdateUserInfo()
+                                    initializeTheRestaurantDatabaseReference()
                                     initializeDummyRestaurantsData()
                                     initializeDummyOrdersData()
-                                    _navigateToHome.value = true
                                 }
                             } else {
                                 _errorHappened.value = updateProfileTask.exception?.message
@@ -347,8 +359,6 @@ class DeliveryViewModel : ViewModel() {
         }
         auth.signInWithCustomToken(user.email).addOnCompleteListener {
             if (it.isSuccessful) {
-                initializeDummyRestaurantsData()
-                initializeDummyOrdersData()
                 _navigateToHome.value = true
             } else {
                 _errorHappened.value = it.exception?.message
@@ -453,37 +463,78 @@ class DeliveryViewModel : ViewModel() {
     }
 
     fun getOrdersForDate(selectedDate: Date): List<Order> {
-        return _orders.value?.filter { isSameDate(it.date, selectedDate) } ?: emptyList()
+        return _orders.value?.filter {isSameDate(selectedDate, it.date)} ?: emptyList()
     }
 
-    private fun isSameDate(date1: Date?, date2: Date?): Boolean {
+    fun isSameDate(date1: Date?, date2: Date?): Boolean {
+        Log.d("viewmodel", "date1 = $date1")
+        Log.d("viewmodel", "date2 = $date2")
         if (date1 == null || date2 == null) {
+            Log.d("viewmodel", "dates not the same")
             return false
         }
 
+        Log.d("viewmodel", "dates the same")
         val dateFormat = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
         return dateFormat.format(date1) == dateFormat.format(date2)
     }
 
-    fun getProfilePictureUri(userId: String): String? {
-        // Replace this with your actual code to fetch the profile picture URI from the database
-        // For example, if you're using Firebase Realtime Database:
-        val databaseReference = FirebaseDatabase.getInstance().getReference("users/$userId/profilePictureUri")
+    fun getProfilePictureUri(): LiveData<String?> {
+        // Create a MutableLiveData to hold the profile picture URI
+        val profilePictureUriLiveData = MutableLiveData<String?>()
 
-        // Read the profile picture URI from the database
-        var profilePictureUri: String? = null
-        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                profilePictureUri = snapshot.getValue(String::class.java)
-                // Update the UI or do any further processing with the profilePictureUri
-            }
+        // Get the current authenticated user
+        val currentUser = getCurrentUser()
 
-            override fun onCancelled(error: DatabaseError) {
-                // Handle the error if needed
-            }
-        })
+        // Check if the user is signed in
+        if (currentUser != null) {
+            // Get the photo URL from the authenticated user
+            val photoUrl = currentUser.photoUrl
 
-        return profilePictureUri
+            // Set the value of the MutableLiveData
+            profilePictureUriLiveData.value = photoUrl?.toString()
+        } else {
+            // Handle the case where the user is not signed in
+            Log.e(TAG, "User not signed in.")
+        }
+
+        return profilePictureUriLiveData
+    }
+    fun getWeeklySpending(startDate: Date, endDate: Date): List<Order> {
+        val calendar = Calendar.getInstance()
+        calendar.time = startDate
+
+        val weeklyOrders = mutableListOf<Order>()
+
+        while (calendar.time.before(endDate) || isSameDate(calendar.time, endDate)) {
+            val currentDayOrders = _orders.value?.filter { isSameDate(it.date, calendar.time) } ?: emptyList()
+            weeklyOrders.addAll(currentDayOrders)
+
+            calendar.add(Calendar.DAY_OF_WEEK, 1)
+        }
+
+        return weeklyOrders
+    }
+
+    fun getCalendarOrderDates(): List<String> {
+        val orderDates = _orders.value?.map { it.date } ?: emptyList()
+
+        // Format dates as strings
+        val dateFormat = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
+        return orderDates.filterNotNull().map { dateFormat.format(it) }
+    }
+    fun getCurrentStartDate(): Date {
+        return currentStartDate
+    }
+
+    // Add setter for currentStartDate
+    fun setCurrentStartDate(startDate: Date) {
+        currentStartDate = startDate
+    }
+
+    // Call this function when you want to trigger the updateUserInfoEvent
+    fun notifyUpdateUserInfo() {
+        _updateUserInfoEvent.value = Unit
     }
 
     fun navigateToSignUp() {
