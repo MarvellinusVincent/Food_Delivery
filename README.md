@@ -69,7 +69,7 @@ The following **extensions** are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='Food-Delivery-Walkthough.gif' title='Food-Delivery-Walkthough.gif' width='50%' alt='Food-Delivery-Walkthough.gif' />
+<img src='Food-Delivery-Walkthrough.gif' title='Food-Delivery-Walkthrough.gif' width='50%' alt='Food-Delivery-Walkthrough.gif' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
