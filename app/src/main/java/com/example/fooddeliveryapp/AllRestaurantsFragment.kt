@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.fooddeliveryapp.databinding.FragmentAllRestaurantsBinding
 import com.example.fooddeliveryapp.databinding.RestaurantItemBinding
 
+/**
+ * Fragment displaying a list of all restaurants.
+ */
 class AllRestaurantsFragment : Fragment() {
 
     private var _binding: FragmentAllRestaurantsBinding? = null
@@ -23,7 +26,7 @@ class AllRestaurantsFragment : Fragment() {
         _binding = FragmentAllRestaurantsBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        // Set up RecyclerView
+        /** Set up RecyclerView */
         val recyclerView = binding.recyclerViewAllRestaurants
         val adapter = RestaurantAdapter()
         recyclerView.adapter = adapter
@@ -31,7 +34,7 @@ class AllRestaurantsFragment : Fragment() {
 
         viewModel.initializeRestaurantDatabaseIfNeeded()
 
-        // Observe the list of restaurants in the ViewModel
+        /** Observe the list of restaurants in the ViewModel */
         viewModel.restaurants.observe(viewLifecycleOwner, Observer { restaurants ->
             adapter.submitList(restaurants)
         })
@@ -61,7 +64,9 @@ class AllRestaurantsFragment : Fragment() {
         _binding = null
     }
 
-    // RestaurantAdapter inner class
+    /**
+     * [RestaurantAdapter] inner class for managing the RecyclerView's restaurant items.
+     */
     inner class RestaurantAdapter : androidx.recyclerview.widget.ListAdapter<Restaurant, RestaurantAdapter.RestaurantViewHolder>(AllRestaurantDiffItemCallback()) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RestaurantViewHolder {
@@ -74,9 +79,17 @@ class AllRestaurantsFragment : Fragment() {
             holder.bind(restaurant)
         }
 
+        /**
+         * [RestaurantViewHolder] inner class for holding the individual restaurant item views.
+         */
         inner class RestaurantViewHolder(private val binding: RestaurantItemBinding) :
             androidx.recyclerview.widget.RecyclerView.ViewHolder(binding.root) {
 
+            /**
+             * Binds the restaurant data to the item view and sets up the click listener.
+             *
+             * @param restaurant The restaurant item to bind.
+             */
             fun bind(restaurant: Restaurant) {
                 binding.restaurant = restaurant
                 binding.executePendingBindings()

@@ -36,12 +36,12 @@ import java.util.Locale
 import kotlin.random.Random
 
 class DeliveryViewModel : ViewModel() {
-    private lateinit var auth: FirebaseAuth
+    private var auth: FirebaseAuth
     private lateinit var restaurantCollection: DatabaseReference
     private lateinit var orderCollection: DatabaseReference
-    private lateinit var context: Context
-    private lateinit var locationManager: LocationManager
-    private lateinit var locationListener: LocationListener
+    private var context: Context
+    private var locationManager: LocationManager
+    private var locationListener: LocationListener
     private var currentStartDate: Date = Date()
     var lastKnownLocation: Location? = null
     private var isRestaurantDatabaseInitialized = false
@@ -58,7 +58,6 @@ class DeliveryViewModel : ViewModel() {
     private val _navigateToSignUp = MutableLiveData<Boolean>(false)
     private val _navigateToSignIn = MutableLiveData<Boolean>(false)
     private val _errorHappened = MutableLiveData<String?>()
-    private val _filteredOrders: MutableLiveData<MutableList<Order>> = MutableLiveData()
     private var ordersList: List<Order> = emptyList()
     private val _updateUserInfoEvent = MutableLiveData<Unit>()
 
@@ -76,8 +75,6 @@ class DeliveryViewModel : ViewModel() {
         get() = _navigateToSignIn
     val errorHappened: LiveData<String?>
         get() = _errorHappened
-    val filteredOrders: LiveData<List<Order>>
-        get() = _filteredOrders as LiveData<List<Order>>
     val updateUserInfoEvent: LiveData<Unit>
         get() = _updateUserInfoEvent
 
@@ -90,25 +87,22 @@ class DeliveryViewModel : ViewModel() {
         locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationListener = object : LocationListener {
             override fun onLocationChanged(location: Location) {
-                // Update lastKnownLocation when the location changes
+                /** Update lastKnownLocation when the location changes */
                 lastKnownLocation = location
                 Log.d("UserLocation", "Latitude: ${location.latitude}, Longitude: ${location.longitude}")
             }
 
             override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-                // Handle status changes if needed
             }
 
             override fun onProviderEnabled(provider: String) {
-                // Handle provider enable if needed
             }
 
             override fun onProviderDisabled(provider: String) {
-                // Handle provider disable if needed
             }
         }
 
-        // Request location updates
+        /** Request location updates */
         requestLocationUpdates()
     }
 
@@ -184,7 +178,6 @@ class DeliveryViewModel : ViewModel() {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // Handle the error
             }
         })
     }
@@ -221,7 +214,6 @@ class DeliveryViewModel : ViewModel() {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // Handle the error
             }
         })
     }
@@ -234,7 +226,7 @@ class DeliveryViewModel : ViewModel() {
             thirdImage = R.drawable.restaurant3
         )
 
-        // Generate a random location within 50 miles of the user
+        /** Generate a random location within 50 miles of the user */
         val userLocation = getUserLocation()
         if (userLocation != null) {
             val randomLocation = getRandomLocation(userLocation)
@@ -249,16 +241,15 @@ class DeliveryViewModel : ViewModel() {
     }
 
     private fun getRandomLocation(userLocation: Location): Location {
-        val geocoder = Geocoder(context)
         val maxDistanceMiles = 50.0
         val randomRadius = Random.nextDouble(0.0, maxDistanceMiles)
         val randomAngle = Random.nextDouble(0.0, 360.0)
         val randomLocation = Location("Random Location")
 
-        // Convert miles to meters
+        /** Convert miles to meters */
         val distanceMeters = randomRadius * 1609.34
 
-        // Calculate new location based on user's location, random distance, and angle
+        /** Calculate new location based on user's location, random distance, and angle */
 
         val lat = userLocation.latitude + (distanceMeters / 111111.0) * Math.cos(Math.toRadians(randomAngle))
         val lon = userLocation.longitude + (distanceMeters / 111111.0) * Math.sin(Math.toRadians(randomAngle))
@@ -270,20 +261,19 @@ class DeliveryViewModel : ViewModel() {
     }
 
     private fun requestLocationUpdates() {
-        // Use criteria to choose the best provider based on your requirements
         val criteria = Criteria()
         val provider = locationManager.getBestProvider(criteria, false)
 
-        // Check for permissions before requesting location updates
+        /** Check for permissions before requesting location updates */
         if (context.checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
             || context.checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
         ) {
-            // Request location updates
+            /** Request location updates */
             if (provider != null) {
                 locationManager.requestLocationUpdates(provider, 1000, 0.1f, locationListener)
             }
 
-            // Get the last known location
+            /** Get the last known location */
             lastKnownLocation = provider?.let { locationManager.getLastKnownLocation(it) }
         } else {
             Log.e(TAG, "Location permissions not granted.")
@@ -297,7 +287,7 @@ class DeliveryViewModel : ViewModel() {
             return
         }
 
-        // Provide a dummy password (can be empty or any string since it won't be used for authentication)
+        /** Provide a dummy password (can be empty or any string since it won't be used for authentication) */
         val dummyPassword = "dummyPassword"
 
         auth.createUserWithEmailAndPassword(user.email, dummyPassword)
@@ -305,7 +295,7 @@ class DeliveryViewModel : ViewModel() {
                 if (authResult.isSuccessful) {
                     val firebaseUser = authResult.result?.user
 
-                    // Set the display name for the user
+                    /** Set the display name for the user */
                     val profileUpdates = UserProfileChangeRequest.Builder()
                         .setDisplayName(user.name)
                         .build()
@@ -313,9 +303,9 @@ class DeliveryViewModel : ViewModel() {
                     firebaseUser?.updateProfile(profileUpdates)
                         ?.addOnCompleteListener { updateProfileTask ->
                             if (updateProfileTask.isSuccessful) {
-                                // Display name updated successfully
+                                /** Display name updated successfully */
                                 if (!user.profilePictureUri.isNullOrEmpty()) {
-                                    // Set profile picture URI if it's not null or empty
+                                    /** Set profile picture URI if it's not null or empty */
                                     val photoUri = Uri.parse(user.profilePictureUri)
                                     val photoUpdate = UserProfileChangeRequest.Builder()
                                         .setPhotoUri(photoUri)
@@ -324,7 +314,7 @@ class DeliveryViewModel : ViewModel() {
                                     firebaseUser.updateProfile(photoUpdate)
                                         .addOnCompleteListener { updatePhotoTask ->
                                             if (updatePhotoTask.isSuccessful) {
-                                                // Profile picture URI updated successfully
+                                                /** Profile picture URI updated successfully */
                                                 _navigateToHome.value = true
                                                 notifyUpdateUserInfo()
                                                 initializeTheRestaurantDatabaseReference()
@@ -335,7 +325,7 @@ class DeliveryViewModel : ViewModel() {
                                             }
                                         }
                                 } else {
-                                    // No profile picture URI to set
+                                    /** No profile picture URI to set */
                                     _navigateToHome.value = true
                                     notifyUpdateUserInfo()
                                     initializeTheRestaurantDatabaseReference()
@@ -402,33 +392,8 @@ class DeliveryViewModel : ViewModel() {
             deliveryAddress = deliveryAddress
         )
 
-        // Save order to the order database
+        /** Save order to the order database */
         orderCollection.child(order.restaurantName).setValue(order)
-    }
-
-    fun calculateDeliveryTime(): Long {
-        // Assuming you have the location information and lastKnownLocation available
-        val distanceBetween = calculateDistanceBetween()
-        val randomFactor = Random.nextDouble(5.0, 100.0)
-        return ((distanceBetween / 100) * randomFactor).toLong()
-    }
-
-    private fun calculateDistanceBetween(): Double {
-        // Implement the logic to calculate the distance between the Restaurant and Delivery address
-        // You can use the Haversine formula or other methods
-        // Example: (This is a dummy implementation, replace it with the actual logic)
-        return if (lastKnownLocation != null && restaurant.value != null) {
-            lastKnownLocation!!.distanceTo(getRestaurantLocation()).toDouble() // Distance in meters
-        } else {
-            0.0
-        }
-    }
-
-    private fun getRestaurantLocation(): Location {
-        val restaurantLocation = Location("Restaurant Location")
-        restaurantLocation.latitude = restaurant.value?.location?.latitude ?: 0.0
-        restaurantLocation.longitude = restaurant.value?.location?.longitude ?: 0.0
-        return restaurantLocation
     }
 
     fun getOrders(currentRestaurant: String): List<Order> {
@@ -436,7 +401,6 @@ class DeliveryViewModel : ViewModel() {
         orders.filter { order ->
             val isMatchingRestaurant = order.restaurantName == currentRestaurant
             if (isMatchingRestaurant) {
-                // Log the order if the restaurantName matches
                 Log.d(TAG, "Matching Order: $order")
             }
             isMatchingRestaurant
@@ -480,21 +444,21 @@ class DeliveryViewModel : ViewModel() {
     }
 
     fun getProfilePictureUri(): LiveData<String?> {
-        // Create a MutableLiveData to hold the profile picture URI
+        /** Create a MutableLiveData to hold the profile picture URI */
         val profilePictureUriLiveData = MutableLiveData<String?>()
 
-        // Get the current authenticated user
+        /** Get the current authenticated user */
         val currentUser = getCurrentUser()
 
-        // Check if the user is signed in
+        /** Check if the user is signed in */
         if (currentUser != null) {
-            // Get the photo URL from the authenticated user
+            /** Get the photo URL from the authenticated user */
             val photoUrl = currentUser.photoUrl
 
-            // Set the value of the MutableLiveData
+            /** Set the value of the MutableLiveData */
             profilePictureUriLiveData.value = photoUrl?.toString()
         } else {
-            // Handle the case where the user is not signed in
+            /** Handle the case where the user is not signed in */
             Log.e(TAG, "User not signed in.")
         }
 
@@ -519,7 +483,7 @@ class DeliveryViewModel : ViewModel() {
     fun getCalendarOrderDates(): List<String> {
         val orderDates = _orders.value?.map { it.date } ?: emptyList()
 
-        // Format dates as strings
+        /** Format dates as strings */
         val dateFormat = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
         return orderDates.filterNotNull().map { dateFormat.format(it) }
     }
@@ -527,12 +491,12 @@ class DeliveryViewModel : ViewModel() {
         return currentStartDate
     }
 
-    // Add setter for currentStartDate
+    /** Add setter for currentStartDate */
     fun setCurrentStartDate(startDate: Date) {
         currentStartDate = startDate
     }
 
-    // Call this function when you want to trigger the updateUserInfoEvent
+    /** Call this function when you want to trigger the updateUserInfoEvent */
     fun notifyUpdateUserInfo() {
         _updateUserInfoEvent.value = Unit
     }

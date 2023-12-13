@@ -1,5 +1,4 @@
 package com.example.fooddeliveryapp
-// WeeklyFragment.kt
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -32,6 +31,14 @@ class WeeklyFragment : Fragment() {
     private lateinit var btnPreviousWeek: ImageButton
     private lateinit var btnNextWeek: ImageButton
 
+    /**
+     * Called when the fragment's view is created.
+     *
+     * @param inflater The LayoutInflater object to inflate views.
+     * @param container The parent view to attach the fragment's UI.
+     * @param savedInstanceState The saved state of the fragment.
+     * @return The root view of the fragment.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,7 +57,7 @@ class WeeklyFragment : Fragment() {
             navigateToNextWeek()
         }
 
-        // Set up your BarChart with data
+        /** Set up your BarChart with data */
         setupWeeklyBarChart()
 
         return view
@@ -59,29 +66,29 @@ class WeeklyFragment : Fragment() {
     private fun setupWeeklyBarChart() {
         val calendar = Calendar.getInstance()
 
-        // Get the current week's start and end dates
+        /** Get the current week's start and end dates */
         val startDate = viewModel.getCurrentStartDate()
         calendar.time = startDate
         val endDate = getEndOfWeek(calendar)
 
-        // Retrieve weekly spending data from ViewModel
+        /** Retrieve weekly spending data from ViewModel */
         val weeklySpendingData = viewModel.getWeeklySpending(startDate, endDate)
 
-        // Prepare data for BarChart
+        /** Prepare data for BarChart */
         val entries = ArrayList<BarEntry>()
         val dateLabels = ArrayList<String>()
 
-        // Iterate over each day of the week
+        /** Iterate over each day of the week */
         for (i in Calendar.SUNDAY..Calendar.SATURDAY) {
             val currentDate = calendar.time
             val dailySpending = weeklySpendingData.find { viewModel.isSameDate(it.date, currentDate) }
 
-            // If there are orders for the current day, add the spending amount to the chart
+            /** If there are orders for the current day, add the spending amount to the chart */
             if (dailySpending != null) {
                 val spendingAmount = dailySpending.price.toFloat()
                 entries.add(BarEntry(i.toFloat(), spendingAmount))
             } else {
-                // If no orders for the current day, set the bar height to zero
+            /** If no orders for the current day, set the bar height to zero */
                 entries.add(BarEntry(i.toFloat(), 0f))
             }
 
@@ -98,8 +105,8 @@ class WeeklyFragment : Fragment() {
         xAxis.setDrawGridLines(false)
         xAxis.valueFormatter = IndexAxisValueFormatter(dateLabels)
 
-        val yAxis = weeklyBarChart.axisLeft // Assuming you're using the left axis
-        yAxis.axisMinimum = 0f // Set the minimum value to zero
+        val yAxis = weeklyBarChart.axisLeft
+        yAxis.axisMinimum = 0f
 
         val barData = BarData(dataSet)
         weeklyBarChart.data = barData
@@ -123,7 +130,6 @@ class WeeklyFragment : Fragment() {
             }
 
             override fun onNothingSelected() {
-                // Handle when nothing is selected
             }
         })
 
@@ -134,7 +140,7 @@ class WeeklyFragment : Fragment() {
         val currentDate = Calendar.getInstance()
         currentDate.time = calendar.time
 
-        // Set the calendar to the end of the week
+        /** Set the calendar to the end of the week */
         currentDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY)
         currentDate.add(Calendar.DAY_OF_WEEK, 1)
 
@@ -147,33 +153,33 @@ class WeeklyFragment : Fragment() {
     }
 
     private fun navigateToPreviousWeek() {
-        // Adjust the calendar to the previous week
+        /** Adjust the calendar to the previous week */
         val calendar = Calendar.getInstance()
         calendar.time = viewModel.getCurrentStartDate()
         calendar.add(Calendar.WEEK_OF_YEAR, -1)
 
-        // Update the ViewModel with the new start date
+        /** Update the ViewModel with the new start date */
         viewModel.setCurrentStartDate(calendar.time)
 
-        // Refresh the BarChart with the new data
+        /** Refresh the BarChart with the new data */
         setupWeeklyBarChart()
     }
 
     private fun navigateToNextWeek() {
-        // Adjust the calendar to the next week
+        /** Adjust the calendar to the next week */
         val calendar = Calendar.getInstance()
         calendar.time = viewModel.getCurrentStartDate()
         calendar.add(Calendar.WEEK_OF_YEAR, 1)
 
-        // Update the ViewModel with the new start date
+        /** Update the ViewModel with the new start date */
         viewModel.setCurrentStartDate(calendar.time)
 
-        // Refresh the BarChart with the new data
+        /** Refresh the BarChart with the new data */
         setupWeeklyBarChart()
     }
 
     private fun showPopupWindow(orders: List<Order>) {
-        // Customize the appearance and content of the pop-up window
+        /** Customize the appearance and content of the pop-up window */
         val popupView = layoutInflater.inflate(R.layout.popup_layout, null)
         val popupWindow = PopupWindow(
             popupView,
@@ -182,19 +188,19 @@ class WeeklyFragment : Fragment() {
             true
         )
 
-        // Set up UI components in the pop-up window
+        /** Set up UI components in the pop-up window */
         val totalSpendingTextView: TextView = popupView.findViewById(R.id.tvTotalMoneySpend)
         val restaurantNameTextView: TextView = popupView.findViewById(R.id.tvRestaurantName)
 
-        // Calculate total spending
+        /** Calculate total spending */
         val totalSpending = orders.sumByDouble { it.price.toDouble() }
         totalSpendingTextView.text = getString(R.string.total_money_spend, totalSpending)
 
-        // Get the name of the restaurant from the first order (assuming all orders have the same restaurant)
+        /** Get the name of the restaurant from the first order (assuming all orders have the same restaurant) */
         val restaurantName = orders.firstOrNull()?.restaurantName ?: ""
         restaurantNameTextView.text = getString(R.string.restaurant_name, restaurantName)
 
-        // Show the pop-up window at a specific location relative to the anchor view (e.g., the BarChart)
+        /** Show the pop-up window at a specific location relative to the anchor view (e.g., the BarChart) */
         popupWindow.showAtLocation(weeklyBarChart, Gravity.CENTER, 0, 0)
     }
 }

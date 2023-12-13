@@ -1,7 +1,6 @@
 package com.example.fooddeliveryapp
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +11,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.fooddeliveryapp.databinding.FragmentRecentRestaurantsBinding
 import com.example.fooddeliveryapp.databinding.OrderItemBinding
-import com.example.fooddeliveryapp.databinding.RestaurantItemBinding
 
+/**
+ * Fragment responsible for displaying a list of recent restaurants.
+ */
 class RecentRestaurantsFragment : Fragment() {
 
     private var _binding: FragmentRecentRestaurantsBinding? = null
@@ -24,13 +25,13 @@ class RecentRestaurantsFragment : Fragment() {
         _binding = FragmentRecentRestaurantsBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        // Set up RecyclerView
+        /** Set up RecyclerView */
         val recyclerView = binding.recyclerViewRecentRestaurants
         val adapter = RecentRestaurantAdapter()
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-        // Observe the list of restaurants in the ViewModel
+        /** Observe the list of restaurants in the ViewModel */
         viewModel.restaurants.observe(viewLifecycleOwner, Observer { restaurants ->
             adapter.submitList(restaurants)
         })
@@ -58,6 +59,9 @@ class RecentRestaurantsFragment : Fragment() {
         _binding = null
     }
 
+    /**
+     * RecyclerView Adapter for displaying recent restaurants.
+     */
     inner class RecentRestaurantAdapter : androidx.recyclerview.widget.ListAdapter<Restaurant, RecentRestaurantAdapter.RecentRestaurantViewHolder>(AllRestaurantDiffItemCallback()) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentRestaurantViewHolder {
@@ -66,13 +70,21 @@ class RecentRestaurantsFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: RecentRestaurantViewHolder, position: Int) {
-            val order = getItem(position)
-            holder.bind(order)
+            val restaurant = getItem(position)
+            holder.bind(restaurant)
         }
 
+        /**
+         * ViewHolder for the recent restaurant items.
+         */
         inner class RecentRestaurantViewHolder(private val binding: OrderItemBinding) :
             androidx.recyclerview.widget.RecyclerView.ViewHolder(binding.root) {
 
+            /**
+             * Binds the restaurant data to the item view and sets up click listener.
+             *
+             * @param restaurant The [Restaurant] object to be displayed.
+             */
             fun bind(restaurant: Restaurant) {
                 binding.restaurant = restaurant
                 binding.executePendingBindings()

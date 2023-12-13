@@ -1,4 +1,3 @@
-// OrdersFragment.kt
 package com.example.fooddeliveryapp
 
 import android.os.Bundle
@@ -14,6 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fooddeliveryapp.databinding.FragmentRecentOrdersBinding
 
+/**
+ * Fragment responsible for displaying the user's recent orders.
+ */
 class RecentOrdersFragment : Fragment() {
 
     private var _binding: FragmentRecentOrdersBinding? = null
@@ -29,11 +31,11 @@ class RecentOrdersFragment : Fragment() {
         val view = binding.root
 
         val recyclerView = binding.recyclerViewRecentOrders
-        val ordersAdapter = RecentOrdersAdapter() // You need to create an adapter for orders
+        val ordersAdapter = RecentOrdersAdapter()
         recyclerView.adapter = ordersAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        // Call a function to fetch order details from the database and set them to the adapter
+        /** Fetch recent orders from the database and set them to the adapter */
         val allOrders = viewModel.getAllOrders()
         Log.d("Recent Order Fragment", "$allOrders")
         ordersAdapter.setOrders(allOrders)
@@ -56,37 +58,47 @@ class RecentOrdersFragment : Fragment() {
 
         override fun getItemCount(): Int = orders.size
 
+        /**
+         * Set the list of recent orders for the adapter and notify any observers of the data set change.
+         *
+         * @param orderList List of [Order] objects representing recent orders.
+         */
         fun setOrders(orderList: List<Order>) {
             orders = orderList
             notifyDataSetChanged()
         }
 
         inner class RecentOrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            /**
+             * Bind recent order details to the corresponding UI elements in the order_item layout.
+             *
+             * @param order The [Order] object containing details to be displayed.
+             */
             fun bind(order: Order) {
-                // Bind the order details to the corresponding UI elements in the order_item layout
+                /** Bind order details to UI elements */
                 itemView.findViewById<TextView>(R.id.OrderAgainDate).text = "Date: ${order.getFormattedDate()}"
                 itemView.findViewById<TextView>(R.id.OrderAgainTime).text = "Time: ${order.time}"
                 itemView.findViewById<TextView>(R.id.OrderAgainPrice).text = "Price: ${order.price}"
                 itemView.findViewById<TextView>(R.id.OrderAgainRestaurantName).text = "Ordered from: ${order.restaurantName}"
                 itemView.findViewById<TextView>(R.id.OrderAgainAddress).text = "Delivery Address: ${order.deliveryAddress}"
 
-                // Create a LinearLayout to hold food items and quantities
+                /** Create a LinearLayout to hold food items and quantities */
                 val foodItemsLayout = itemView.findViewById<LinearLayout>(R.id.foodItemsOrderAgainLayout)
 
-                // Clear any previous views in the layout
+                /** Clear any previous views in the layout */
                 foodItemsLayout.removeAllViews()
 
-                // Iterate through the list of food items in the order
+                /** Iterate through the list of food items in the order */
                 for (foodItem in order.foodName.split(", ")) {
                     val foodItemView = LayoutInflater.from(itemView.context).inflate(R.layout.food_item_row, null)
                     val itemNameTextView = foodItemView.findViewById<TextView>(R.id.foodItemRowName)
                     val quantityTextView = foodItemView.findViewById<TextView>(R.id.foodItemRowQuantity)
 
-                    // Set the name and quantity for each food item
+                    /** Set the name and quantity for each food item */
                     itemNameTextView.text = foodItem
                     quantityTextView.text = "Quantity: ${order.quantity}"
 
-                    // Add the food item view to the layout
+                    /** Add the food item view to the layout */
                     foodItemsLayout.addView(foodItemView)
                 }
             }

@@ -1,6 +1,5 @@
 package com.example.fooddeliveryapp
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,12 +13,10 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fooddeliveryapp.databinding.FragmentCheckoutBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
-import java.sql.Time
-import java.util.Date
-import java.util.Random
 
+/**
+ * Fragment for handling the checkout process, including displaying selected items and placing an order.
+ */
 class CheckoutFragment : Fragment() {
 
     private var _binding: FragmentCheckoutBinding? = null
@@ -33,16 +30,14 @@ class CheckoutFragment : Fragment() {
         _binding = FragmentCheckoutBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        // Retrieve selected items from arguments
+        /** Retrieve selected items from arguments */
         val selectedItems = arguments?.getParcelableArrayList<FoodItem>("selectedItems")
-
-        // Assuming you have a RecyclerView in the layout with the id "checkoutRecyclerView"
         val recyclerView = binding.checkoutRecyclerView
         val checkoutAdapter = CheckoutAdapter()
         recyclerView.adapter = checkoutAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        // Pass selected items to the adapter
+        /** Pass selected items to the adapter */
         checkoutAdapter.setSelectedItems(selectedItems)
 
         binding.checkoutModifyOrderButton.setOnClickListener {
@@ -58,14 +53,10 @@ class CheckoutFragment : Fragment() {
             val deliveryAddress = binding.checkoutDeliveryAddressEditText.text.toString().trim()
 
             if (selectedItems.isNotEmpty() && deliveryAddress.isNotEmpty()) {
-                // Save order details to the order database
+                /** Save order details to the order database */
                 saveOrderDetails(selectedItems, deliveryAddress)
 
-                // Calculate delivery time and start the background service
-                val deliveryTime = calculateDeliveryTime()
-//                startDeliveryService(deliveryTime)
-
-                // Navigate to the Orders screen
+                /** Navigate to the Orders screen */
                 view?.findNavController()?.navigate(R.id.action_checkoutFragment_to_ordersFragment)
             } else {
                 Log.d("Checkout Fragment", "address emoty")
@@ -74,22 +65,12 @@ class CheckoutFragment : Fragment() {
         return view
     }
 
+    /**
+     * Saves order details to the order database using the ViewModel.
+     */
     private fun saveOrderDetails(selectedItems: List<FoodItem>, deliveryAddress: String) {
-        // Assuming you have a reference to the ViewModel
         viewModel.saveOrder(selectedItems, deliveryAddress)
     }
-
-    private fun calculateDeliveryTime(): Long {
-        // Assuming you have a reference to the ViewModel
-        return viewModel.calculateDeliveryTime()
-    }
-
-//    fun startDeliveryService(deliveryTime: Long) {
-//        val serviceIntent = Intent(context, DeliveryService::class.java)
-//        serviceIntent.putExtra("deliveryTime", deliveryTime)
-//        context?.startService(serviceIntent)
-//    }
-
 
     inner class CheckoutAdapter : RecyclerView.Adapter<CheckoutAdapter.CheckoutViewHolder>() {
 
@@ -131,6 +112,9 @@ class CheckoutFragment : Fragment() {
         }
 
         inner class CheckoutViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            /**
+             * Binds the data of a selected item to the view.
+             */
             fun bind(selectedItem: FoodItem) {
                 itemView.findViewById<TextView>(R.id.checkoutItemName).text = selectedItem.name
                 itemView.findViewById<TextView>(R.id.checkoutItemQuantity).text =

@@ -1,4 +1,3 @@
-// OrdersFragment.kt
 package com.example.fooddeliveryapp
 
 import android.os.Bundle
@@ -13,6 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fooddeliveryapp.databinding.FragmentOrdersBinding
 
+/**
+ * Fragment responsible for displaying the user's order history.
+ */
 class OrdersFragment : Fragment() {
 
     private var _binding: FragmentOrdersBinding? = null
@@ -27,11 +29,11 @@ class OrdersFragment : Fragment() {
         val view = binding.root
 
         val recyclerView = binding.ordersRecyclerView
-        val ordersAdapter = OrdersAdapter() // You need to create an adapter for orders
+        val ordersAdapter = OrdersAdapter()
         recyclerView.adapter = ordersAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        // Call a function to fetch order details from the database and set them to the adapter
+        /** Fetch and display order details */
         val filteredOrders = viewModel.getOrders(viewModel.restaurantName)
         ordersAdapter.setOrders(filteredOrders)
 
@@ -54,37 +56,47 @@ class OrdersFragment : Fragment() {
 
         override fun getItemCount(): Int = orders.size
 
+        /**
+         * Set the list of orders for the adapter and notify any observers of the data set change.
+         *
+         * @param orderList List of [Order] objects to be displayed.
+         */
         fun setOrders(orderList: List<Order>) {
             orders = orderList
             notifyDataSetChanged()
         }
 
         inner class OrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            /**
+             * Bind order details to the corresponding UI elements in the order_item layout.
+             *
+             * @param order The [Order] object containing details to be displayed.
+             */
             fun bind(order: Order) {
-                // Bind the order details to the corresponding UI elements in the order_item layout
+                // Bind order details to UI elements
                 itemView.findViewById<TextView>(R.id.orderDetailsDate).text = "Date: ${order.getFormattedDate()}"
                 itemView.findViewById<TextView>(R.id.orderDetailsTime).text = "Time: ${order.time}"
                 itemView.findViewById<TextView>(R.id.orderDetailsPrice).text = "Price: ${order.price}"
                 itemView.findViewById<TextView>(R.id.orderDetailsRestaurantName).text = "Ordered from: ${order.restaurantName}"
                 itemView.findViewById<TextView>(R.id.orderDetailsAddress).text = "Delivery Address: ${order.deliveryAddress}"
 
-                // Create a LinearLayout to hold food items and quantities
+                /** Create a LinearLayout to hold food items and quantities */
                 val foodItemsLayout = itemView.findViewById<LinearLayout>(R.id.foodItemsLayout)
 
-                // Clear any previous views in the layout
+                /** Clear any previous views in the layout */
                 foodItemsLayout.removeAllViews()
 
-                // Iterate through the list of food items in the order
+                /** Iterate through the list of food items in the order */
                 for (foodItem in order.foodName.split(", ")) {
                     val foodItemView = LayoutInflater.from(itemView.context).inflate(R.layout.food_item_row, null)
                     val itemNameTextView = foodItemView.findViewById<TextView>(R.id.foodItemRowName)
                     val quantityTextView = foodItemView.findViewById<TextView>(R.id.foodItemRowQuantity)
 
-                    // Set the name and quantity for each food item
+                    /** Set the name and quantity for each food item */
                     itemNameTextView.text = foodItem
                     quantityTextView.text = "Quantity: ${order.quantity}"
 
-                    // Add the food item view to the layout
+                    /** Add the food item view to the layout */
                     foodItemsLayout.addView(foodItemView)
                 }
             }

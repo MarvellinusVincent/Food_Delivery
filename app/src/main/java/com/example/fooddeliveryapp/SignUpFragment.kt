@@ -9,9 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
@@ -158,7 +156,7 @@ class SignUpFragment : Fragment() {
 
     private fun pickFromGallery() {
         uri?.let {
-            // Use the pickMedia launcher to select an image from the gallery
+            /** Use the pickMedia launcher to select an image from the gallery */
             pickMediaUpload.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         } ?: run {
             Log.e(TAG, "URI is null.")

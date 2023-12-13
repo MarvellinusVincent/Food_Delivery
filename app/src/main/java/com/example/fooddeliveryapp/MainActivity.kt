@@ -9,12 +9,10 @@ import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
-import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -26,13 +24,27 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseUser
 
+/**
+ * Tag for logging purposes.
+ */
 val TAG = "Main Activity"
+
+/**
+ * Request code for location permission.
+ */
 val REQUEST_CODE = 123
+
+/**
+ * The main activity that hosts the navigation graph and handles user authentication.
+ */
 class MainActivity : AppCompatActivity() {
     private lateinit var toolbar: MaterialToolbar
     private lateinit var navView: NavigationView
     private val viewModel: DeliveryViewModel by viewModels()
 
+    /**
+     * Initializes the activity and sets up the navigation components.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -48,7 +60,7 @@ class MainActivity : AppCompatActivity() {
             drawer.openDrawer(GravityCompat.START)
         }
 
-        // Identify top-level destinations
+        /** Identify top-level destinations */
         val topLevelDestinations = setOf(
             R.id.homeFragment,
             R.id.splashFragment,
@@ -59,7 +71,6 @@ class MainActivity : AppCompatActivity() {
             R.id.ordersFragment,
             R.id.recentOrderFragment,
             R.id.calendarFragment
-            // Add other top-level destinations as needed
         )
 
         val builder = AppBarConfiguration.Builder(topLevelDestinations)
@@ -97,7 +108,6 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-
     /*
        Navigate to a destination when an item is clicked.
     */
@@ -106,6 +116,9 @@ class MainActivity : AppCompatActivity() {
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
 
+    /**
+     * Sets the visibility of the toolbar.
+     */
     fun setToolbarVisibility(isVisible: Boolean) {
         supportActionBar?.let {
             if (isVisible) {
@@ -116,12 +129,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Sets up the click listener for the navigation menu items.
+     */
     private fun setupMenuClickListener(navView: NavigationView) {
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.signOut -> {
                     Log.d(TAG, "sign out button clicked")
-                    // Call the signOut function in the ViewModel
+                    /** Call the signOut function in the ViewModel */
                     viewModel.signOut()
                     val navController = findNavController(R.id.nav_host_fragment)
                     navController.navigate(R.id.action_global_signUpFragment)
@@ -131,7 +147,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.recentOrders -> {
-                    // Navigate to the Recent Orders fragment
+                    /** Navigate to the Recent Orders fragment */
                     val navController = findNavController(R.id.nav_host_fragment)
                     navController.navigate(R.id.recentOrderFragment)
                     val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
@@ -139,7 +155,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.calendarView -> {
-                    // Navigate to the Recent Orders fragment
+                    /** Navigate to the Calendar fragment */
                     val navController = findNavController(R.id.nav_host_fragment)
                     navController.navigate(R.id.calendarFragment)
                     val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
@@ -153,12 +169,14 @@ class MainActivity : AppCompatActivity() {
                     drawer.closeDrawers()
                     true
                 }
-                // Add other menu item click handling as needed
                 else -> false
             }
         }
     }
 
+    /**
+     * Sets the user information in the drawer header.
+     */
     private fun setUserInfoInDrawerHeader(user: FirebaseUser?) {
         val navHeader = navView.getHeaderView(0)
         val nameTextView = navHeader.findViewById<TextView>(R.id.nameDrawerHeader)
@@ -166,7 +184,7 @@ class MainActivity : AppCompatActivity() {
 
         if (user != null) {
             Log.d(TAG, "user logged in")
-            // Set the user's name and email in the navigation drawer header
+            /** Set the user's name and email in the navigation drawer header */
             viewModel.getProfilePictureUri().observe(this) { profilePictureUri ->
                 val navHeader = navView.getHeaderView(0)
                 val profilePicture = navHeader.findViewById<ImageView>(R.id.profilePictureSet)
@@ -179,15 +197,17 @@ class MainActivity : AppCompatActivity() {
                 nameTextView.text = user.displayName
                 emailTextView.text = user.email
             }
-
         } else {
             Log.d(TAG, "user not logged in")
-            // If user is not logged in, set default values or hide the views
+            /** If user is not logged in, set default values or hide the views */
             nameTextView.text = "Name"
             emailTextView.text = "Email"
         }
     }
 
+    /**
+     * Updates the user information in the drawer.
+     */
     private fun updateUserInfo() {
         val currentUser = viewModel.getCurrentUser()
         setUserInfoInDrawerHeader(currentUser)
